@@ -2,7 +2,7 @@
  "cells": [
   {
    "cell_type": "code",
-   "execution_count": 2,
+   "execution_count": 1,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -11,7 +11,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 3,
+   "execution_count": 2,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -20,7 +20,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 4,
+   "execution_count": 3,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -29,7 +29,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 5,
+   "execution_count": 4,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -38,7 +38,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 5,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -48,7 +48,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 7,
+   "execution_count": 6,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -58,7 +58,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 8,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -68,7 +68,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 9,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -78,18 +78,22 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 10,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [],
    "source": [
-    "X_train, y_train = mnist_reader.load_mnist('data/fashion', kind='train')\n",
-    "X_test, y_test = mnist_reader.load_mnist('data/fashion', kind='t10k')\n",
-    "m = len(y_train)"
+    "def __init__(self, layers, activation='tanh'):\n",
+    "        if activation == 'sigmoid':\n",
+    "            self.activation = sigmoid\n",
+    "            self.activation_prime = sigmoid_derivada\n",
+    "        elif activation == 'tanh':\n",
+    "            self.activation = tanh\n",
+    "            self.activation_prime = tanh_derivada"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 10,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -108,7 +112,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 11,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -131,7 +135,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 12,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -145,30 +149,45 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 14,
+   "execution_count": 13,
    "metadata": {},
    "outputs": [],
    "source": [
-    "def backpropagation(flat_thetas, shapes, X, Y):\n",
-    "    m, layers = len(x), len(shapes) + 1\n",
+    "def backpropagation(flat_thetas, shapes, X, Y):        \n",
+    "    m, layers = len(X), len(shapes) + 1\n",
     "    thetas = inflate_matrixes(flat_thetas, shapes)\n",
     "    a = feed_forward(thetas, X)\n",
     "    deltas = [*range(layers -1), a[-1] - Y]\n",
     "    \n",
+    "    for l in range(layers - 2, 0, -1): \n",
+    "        deltas.append(deltas[-1].dot(self.weights[l].T)*self.activation_prime(a[l]))\n",
+    "    self.deltas.append(deltas)\n",
+    "    deltas.reverse()\n",
     "    \n",
-    "    "
+    "    for i in range(len(self.weights)):\n",
+    "                layers = np.atleast_2d(a[i])\n",
+    "                deltas = np.atleast_2d(deltas[i])\n",
+    "                self.weights[i] += learning_rate * layer.T.dot(deltas)\n",
+    "                \n",
+    "    return flatten_list_of_arrays([\n",
+    "        deltas\n",
+    "    ])"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 14,
    "metadata": {},
    "outputs": [],
-   "source": []
+   "source": [
+    "X_train, y_train = mnist_reader.load_mnist('data/fashion', kind='train')\n",
+    "X_test, y_test = mnist_reader.load_mnist('data/fashion', kind='t10k')\n",
+    "m = len(y_train)"
+   ]
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 15,
    "metadata": {},
    "outputs": [],
    "source": []
